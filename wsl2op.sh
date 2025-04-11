@@ -47,7 +47,7 @@ source ./platform_function.sh
 # 编译环境中当前账户名字
 user_name=$USER
 # 默认OpenWrtAction的Config文件夹中的config文件名
-config_name=$1
+config_name=$1 || 'R5S.config'
 # wsl PATH路径
 wsl_path=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 # 默认输入超时时间，单位为秒
@@ -93,7 +93,7 @@ Func_LogMessage "请选择要编译的平台：" "Please choose the configuratio
 Func_LogMessage "1) immortalwrt" "1) platform_immortalwrt.sh"
 Func_LogMessage "2) lean" "2) platform_lean.sh"
 Func_LogMessage "3) openwrt" "3) platform_openwrt.sh"
-Func_LogMessage "将在15秒后默认选择 platform_immortalwrt.sh..." "The default choice will be platform_immortalwrt.sh in 15 seconds..."
+Func_LogMessage "将在${timer}秒后默认选择 platform_immortalwrt.sh..." "The default choice will be platform_immortalwrt.sh in ${timer} seconds..."
 
 # 使用read命令等待用户输入，超时15秒后自动选择1
 read -t ${timer} -p "$(Func_LogMessage '输入对应的数字选择（默认1）: ' 'Enter the corresponding number to select (default 1): ')" choice

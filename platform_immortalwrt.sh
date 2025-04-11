@@ -4,7 +4,7 @@ openwrt_dir=${openwrt_dir_front}${config_name}
 # 默认的config目录
 config_dir=config/immortalwrt_config
 # config列表
-config_list=($(ls ${PWD}/../OpenWrtAction/$config_dir))
+config_list=($(ls ${PWD}/$config_dir))
 # feeds目录
 feeds_dir=feeds_config/immortalwrt.feeds.conf.default
 # oepnwrt主源码

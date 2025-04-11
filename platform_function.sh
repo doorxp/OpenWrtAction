@@ -10,6 +10,8 @@
 # File: wsl2op_function.sh
 # Description: WSL automatically compiles Openwrt script code
 
+work_dir=$(pwd)
+
 function Func_LogMessage() {
     Begin="\033[1;96m"
     End="\033[0m"
@@ -106,7 +108,7 @@ check_compile_error() {
 function Func_Compile_Firmware() {
 
     # CheckUpdate
-    cd ${PWD}/../${openwrt_dir}
+    cd ${work_dir}/../${openwrt_dir}
     begin_date=开始时间$(date "+%Y-%m-%d-%H-%M-%S")
     folder_name=log_Compile_${config_name}_$(date "+%Y-%m-%d-%H-%M-%S")
     Func_LogMessage "是否启用Clean编译，如果不输入任何值默认否，输入任意值启用Clean编译，Clean操作适用于大版本更新" "Whether to enable Clean compilation, if you do not enter any value, the default is No, enter any value to enable Clean compilation, Clean operation is suitable for major version updates"
@@ -123,13 +125,13 @@ function Func_Compile_Firmware() {
         sleep 1s
     fi
 
-    Func_LogMessage "创建编译日志文件夹${PWD}/../${log_folder_name}/${folder_name}" "Create compilation log folder ${PWD}/../${log_folder_name}/${folder_name}"
+    Func_LogMessage "创建编译日志文件夹${work_dir}/../${log_folder_name}/${folder_name}" "Create compilation log folder ${work_dir}/../${log_folder_name}/${folder_name}"
     sleep 1s
 
-    mkdir -p ${PWD}/../${log_folder_name}
-    mkdir ${PWD}/../${log_folder_name}/${folder_name}
+    mkdir -p ${work_dir}/../${log_folder_name}
+    mkdir ${work_dir}/../${log_folder_name}/${folder_name}
 
-    echo -e $begin_date >${PWD}/../${log_folder_name}/${folder_name}/Func_Main6_Compile_Time-git_log.log
+    echo -e $begin_date >${work_dir}/../${log_folder_name}/${folder_name}/Func_Main6_Compile_Time-git_log.log
 
     Func_LogSuccess "编译日志文件夹创建成功" "The compilation log folder was created successfully"
     sleep 1s
@@ -139,7 +141,7 @@ function Func_Compile_Firmware() {
     Func_LogMessage "开始将OpenwrtAction中的自定义feeds注入源码中...." "Started injecting custom feeds in OpenwrtAction into source code..."
     sleep 2s
     echo
-    cat ${PWD}/../OpenWrtAction/$feeds_dir >${PWD}/../${openwrt_dir}/feeds.conf.default
+    cat ${work_dir}/../OpenWrtAction/$feeds_dir >${work_dir}/../${openwrt_dir}/feeds.conf.default
 
     Func_DIY1_Script
 
@@ -155,11 +157,11 @@ function Func_Compile_Firmware() {
     echo
     Func_LogMessage "开始update feeds...." "begin update feeds...."
     sleep 1s
-    ./scripts/feeds update -a | tee -a ${PWD}/../${log_folder_name}/${folder_name}/Func_Main1_feeds_update-git_log.log
+    ./scripts/feeds update -a | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/Func_Main1_feeds_update-git_log.log
     echo
     Func_LogMessage "开始install feeds...." "begin install feeds...."
     sleep 1s
-    ./scripts/feeds install -a | tee -a ${PWD}/../${log_folder_name}/${folder_name}/Func_Main2_feeds_install-git_log.log
+    ./scripts/feeds install -a | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/Func_Main2_feeds_install-git_log.log
     echo
 
     Func_DIY2_Script
@@ -169,22 +171,22 @@ function Func_Compile_Firmware() {
     Func_LogMessage "开始将OpenwrtAction中config文件夹下的${config_name}注入源码中,准备make toolchain...." "Start to inject ${config_name} under the config folder in OpenwrtAction into source code..."
     sleep 2s
     echo
-    cat ${PWD}/../OpenWrtAction/$config_dir/${config_name} >${PWD}/../${openwrt_dir}/.config
+    cat ${work_dir}/../OpenWrtAction/$config_dir/${config_name} >${work_dir}/../${openwrt_dir}/.config
 
-    cat ${PWD}/../${openwrt_dir}/.config >${PWD}/../${log_folder_name}/${folder_name}/.config_old
+    cat ${work_dir}/../${openwrt_dir}/.config >${work_dir}/../${log_folder_name}/${folder_name}/.config_old
     # echo -e "\nCONFIG_ALL=y" >> .config
     # echo -e "\nCONFIG_ALL_NONSHARED=y" >> .config
 
     Func_LogMessage "开始执行make defconfig!" "Start to execute make defconfig!"
     sleep 1s
-    make defconfig | tee -a ${PWD}/../${log_folder_name}/${folder_name}/Func_Main3_make_defconfig-git_log.log
+    make defconfig | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/Func_Main3_make_defconfig-git_log.log
 
-    cat ${PWD}/../${openwrt_dir}/.config >${PWD}/../${log_folder_name}/${folder_name}/.config_new
-    diff ${PWD}/../${log_folder_name}/${folder_name}/.config_old ${PWD}/../${log_folder_name}/${folder_name}/.config_new -y -W 200 >${PWD}/../${log_folder_name}/${folder_name}/.config_diff
+    cat ${work_dir}/../${openwrt_dir}/.config >${work_dir}/../${log_folder_name}/${folder_name}/.config_new
+    diff ${work_dir}/../${log_folder_name}/${folder_name}/.config_old ${work_dir}/../${log_folder_name}/${folder_name}/.config_new -y -W 200 >${work_dir}/../${log_folder_name}/${folder_name}/.config_diff
 
     Func_LogMessage "开始执行make download!" "Start to execute make download!"
     sleep 1s
-    make -j8 download | tee -a ${PWD}/../${log_folder_name}/${folder_name}/Func_Main4_make_download-git_log.log
+    make -j8 download | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/Func_Main4_make_download-git_log.log
     is_complie_error=${PIPESTATUS[0]}
     check_compile_error "$is_complie_error" "make download"
 
@@ -205,13 +207,13 @@ function Func_Compile_Firmware() {
             Func_LogSuccess "OK，不执行单线程编译 " "OK, do not perform single-threaded compilation "
             sleep 1s
             # echo "PATH=$wsl_path"
-            PATH=$wsl_path make tools/compile -j$(nproc) $is_VS | tee -a ${PWD}/../${log_folder_name}/${folder_name}/log_Compile1_tools.log
+            PATH=$wsl_path make tools/compile -j$(nproc) $is_VS | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/log_Compile1_tools.log
             is_complie_error=${PIPESTATUS[0]}
         else
             Func_LogSuccess "OK，执行单线程编译。" "OK, execute single-threaded compilation."
             Func_LogMessage "准备开始编译" "Ready to compile"
             sleep 1s
-            PATH=$wsl_path make tools/compile -j1 $is_VS | tee -a ${PWD}/../${log_folder_name}/${folder_name}/log_Compile1_tools.log
+            PATH=$wsl_path make tools/compile -j1 $is_VS | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/log_Compile1_tools.log
             is_complie_error=${PIPESTATUS[0]}
         fi
 
@@ -223,13 +225,13 @@ function Func_Compile_Firmware() {
             Func_LogSuccess "OK，不执行单线程编译 " "OK, do not perform single-threaded compilation "
             sleep 1s
             # echo "PATH=$wsl_path"
-            make tools/compile -j$(nproc) $is_VS | tee -a ${PWD}/../${log_folder_name}/${folder_name}/log_Compile1_tools.log
+            make tools/compile -j$(nproc) $is_VS | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/log_Compile1_tools.log
             is_complie_error=${PIPESTATUS[0]}
         else
             Func_LogSuccess "OK，执行单线程编译。" "OK, execute single-threaded compilation."
             Func_LogMessage "准备开始编译" "Ready to compile"
             sleep 1s
-            make tools/compile -j1 $is_VS | tee -a ${PWD}/../${log_folder_name}/${folder_name}/log_Compile1_tools.log
+            make tools/compile -j1 $is_VS | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/log_Compile1_tools.log
             is_complie_error=${PIPESTATUS[0]}
         fi
         # $PATH
@@ -248,13 +250,13 @@ function Func_Compile_Firmware() {
             Func_LogSuccess "OK，不执行单线程编译 " "OK, do not perform single-threaded compilation "
             sleep 1s
             # echo "PATH=$wsl_path"
-            PATH=$wsl_path make toolchain/compile -j$(nproc) $is_VS | tee -a ${PWD}/../${log_folder_name}/${folder_name}/log_Compile2_toolchain.log
+            PATH=$wsl_path make toolchain/compile -j$(nproc) $is_VS | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/log_Compile2_toolchain.log
             is_complie_error=${PIPESTATUS[0]}
         else
             Func_LogSuccess "OK，执行单线程编译。" "OK, execute single-threaded compilation."
             Func_LogMessage "准备开始编译" "Ready to compile"
             sleep 1s
-            PATH=$wsl_path make toolchain/compile -j1 $is_VS | tee -a ${PWD}/../${log_folder_name}/${folder_name}/log_Compile2_toolchain.log
+            PATH=$wsl_path make toolchain/compile -j1 $is_VS | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/log_Compile2_toolchain.log
             is_complie_error=${PIPESTATUS[0]}
         fi
 
@@ -266,13 +268,13 @@ function Func_Compile_Firmware() {
             Func_LogSuccess "OK，不执行单线程编译 " "OK, do not perform single-threaded compilation "
             sleep 1s
             # echo "PATH=$wsl_path"
-            make toolchain/compile -j$(nproc) $is_VS | tee -a ${PWD}/../${log_folder_name}/${folder_name}/log_Compile2_toolchain.log
+            make toolchain/compile -j$(nproc) $is_VS | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/log_Compile2_toolchain.log
             is_complie_error=${PIPESTATUS[0]}
         else
             Func_LogSuccess "OK，执行单线程编译。" "OK, execute single-threaded compilation."
             Func_LogMessage "准备开始编译" "Ready to compile"
             sleep 1s
-            make toolchain/compile -j1 $is_VS | tee -a ${PWD}/../${log_folder_name}/${folder_name}/log_Compile2_toolchain.log
+            make toolchain/compile -j1 $is_VS | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/log_Compile2_toolchain.log
             is_complie_error=${PIPESTATUS[0]}
         fi
         # $PATH
@@ -290,13 +292,13 @@ function Func_Compile_Firmware() {
             Func_LogSuccess "OK，不执行单线程编译 " "OK, do not perform single-threaded compilation "
             sleep 1s
             # echo "PATH=$wsl_path"
-            PATH=$wsl_path make -j$(nproc) $is_VS | tee -a ${PWD}/../${log_folder_name}/${folder_name}/log_Compile6_Generate_Frimware.log
+            PATH=$wsl_path make -j$(nproc) $is_VS | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/log_Compile6_Generate_Frimware.log
             is_complie_error=${PIPESTATUS[0]}
         else
             Func_LogSuccess "OK，执行单线程编译。" "OK, execute single-threaded compilation."
             Func_LogMessage "准备开始编译" "Ready to compile"
             sleep 1s
-            PATH=$wsl_path make -j1 $is_VS | tee -a ${PWD}/../${log_folder_name}/${folder_name}/log_Compile6_Generate_Frimware.log
+            PATH=$wsl_path make -j1 $is_VS | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/log_Compile6_Generate_Frimware.log
             is_complie_error=${PIPESTATUS[0]}
         fi
 
@@ -308,13 +310,13 @@ function Func_Compile_Firmware() {
             Func_LogSuccess "OK，不执行单线程编译 " "OK, do not perform single-threaded compilation "
             sleep 1s
             # echo "PATH=$wsl_path"
-            make -j$(nproc) $is_VS | tee -a ${PWD}/../${log_folder_name}/${folder_name}/log_Compile6_Generate_Frimware.log
+            make -j$(nproc) $is_VS | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/log_Compile6_Generate_Frimware.log
             is_complie_error=${PIPESTATUS[0]}
         else
             Func_LogSuccess "OK，执行单线程编译。" "OK, execute single-threaded compilation."
             Func_LogMessage "准备开始编译" "Ready to compile"
             sleep 1s
-            make -j1 $is_VS | tee -a ${PWD}/../${log_folder_name}/${folder_name}/log_Compile6_Generate_Frimware.log
+            make -j1 $is_VS | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/log_Compile6_Generate_Frimware.log
             is_complie_error=${PIPESTATUS[0]}
         fi
         # $PATH
@@ -328,7 +330,7 @@ function Func_Compile_Firmware() {
     sleep 1s
 
     end_date=结束时间$(date "+%Y-%m-%d-%H-%M-%S")
-    echo -e $end_date >>${PWD}/../${log_folder_name}/${folder_name}/Func_Main6_Compile_Time-git_log.log
+    echo -e $end_date >>${work_dir}/../${log_folder_name}/${folder_name}/Func_Main6_Compile_Time-git_log.log
 
     ######是否提交编译结果到github Release
     # UpdateFileToGithubRelease
@@ -340,14 +342,14 @@ function Func_Compile_Firmware() {
         Func_LogSuccess "OK，不拷贝" "OK, don't copy"
     else
         Func_LogMessage "开始拷贝" "Start copying"
-        cp -r ${PWD}/../${openwrt_dir}/bin/targets ${PWD}/../${log_folder_name}/${folder_name}
+        cp -r ${work_dir}/../${openwrt_dir}/bin/targets ${work_dir}/../${log_folder_name}/${folder_name}
         Func_LogSuccess "拷贝完成" "Copy completed"
     fi
 
     # 将lede还原
     # Func_LogMessage "将lede源码还原到最后的hash状态!" "Restore the lede source code to the last hash state"
-    # git --git-dir=${PWD}/../${openwrt_dir}/.git --work-tree=${PWD}/../${openwrt_dir} checkout master
-    # git --git-dir=${PWD}/../${openwrt_dir}/.git --work-tree=${PWD}/../${openwrt_dir} clean -xdf
+    # git --git-dir=${work_dir}/../${openwrt_dir}/.git --work-tree=${work_dir}/../${openwrt_dir} checkout master
+    # git --git-dir=${work_dir}/../${openwrt_dir}/.git --work-tree=${work_dir}/../${openwrt_dir} clean -xdf
 
 }
 
@@ -384,17 +386,17 @@ function Func_ConfigList() {
 
 #清理日志文件夹函数
 function Func_CleanLogFolder() {
-    if [ -d "${PWD}/../${log_folder_name}" ]; then
-        Func_LogMessage "是否清理存储超过$clean_day天的日志文件，默认删除，如果录入任意值不删除" "Whether to clean up the log files stored for more than $clean_day days, delete by default, if you enter any value, it will not be deleted"
+    if [ -d "${work_dir}/../${log_folder_name}" ]; then
+        Func_LogMessage "是否清理存储超过${clean_day}天的日志文件，默认删除，如果录入任意值不删除" "Whether to clean up the log files stored for more than $clean_day days, delete by default, if you enter any value, it will not be deleted"
         Func_LogMessage "将会在${timer}秒后自动选择默认值" "The default value will be automatically selected after ${timer} seconds"
         read -t ${timer} isclean
         if [ ! -n "$isclean" ]; then
-            cd ${PWD}/../${log_folder_name}
+            cd ${work_dir}/../${log_folder_name}
             find -mtime +$clean_day -type d | xargs rm -rf
             find -mtime +$clean_day -type f | xargs rm -rf
             Func_LogSuccess "清理成功" "Cleaned up successfully"
         else
-            Func_LogSuccess "OK，不清理超过$clean_day天的日志文件" "OK, do not clean up log files older than $clean_day"
+            Func_LogSuccess "OK，不清理超过${clean_day}天的日志文件" "OK, do not clean up log files older than $clean_day"
         fi
     fi
 
@@ -487,20 +489,20 @@ function Func_Main() {
     Func_LogMessage "开始同步源码...." "Start to synchronize source code..."
     sleep 2s
 
-    cd ${PWD}/..
-    if [ ! -d "${PWD}/../${openwrt_dir}" ]; then
+    cd ${work_dir}/..
+    if [ ! -d "${work_dir}/../${openwrt_dir}" ]; then
         git clone $openwrt_source -b ${openwrt_branch} ${openwrt_dir}
-        cd ${PWD}/..
+        cd ${work_dir}/..
         is_first_compile=1
     else
         cd ${openwrt_dir}
         git fetch origin
         git reset --hard origin/${openwrt_branch}
-        cd ${PWD}/..
+        cd ${work_dir}/..
         is_first_compile=0
     fi
 
-    # if [ ! -f "${PWD}/../${openwrt_dir}/.config" ]; then
+    # if [ ! -f "${work_dir}/../${openwrt_dir}/.config" ]; then
     #     is_first_compile=1
     # else
     #     is_first_compile=0
@@ -572,14 +574,14 @@ function Func_Main() {
         Func_LogMessage "开始将OpenwrtAction中的自定义feeds注入源码中...." "Started injecting custom feeds in OpenwrtAction into source code..."
         sleep 2s
         echo
-        cat ${PWD}/../OpenWrtAction/$feeds_dir >${PWD}/../${openwrt_dir}/feeds.conf.default
-        cd ${PWD}/../${openwrt_dir}
+        cat ${work_dir}/../OpenWrtAction/$feeds_dir >${work_dir}/../${openwrt_dir}/feeds.conf.default
+        cd ${work_dir}/../${openwrt_dir}
 
-        Func_LogMessage "创建编译日志文件夹${PWD}/../${log_folder_name}/${folder_name}" "Create compilation log folder ${PWD}/../${log_folder_name}/${folder_name}"
+        Func_LogMessage "创建编译日志文件夹${work_dir}/../${log_folder_name}/${folder_name}" "Create compilation log folder ${work_dir}/../${log_folder_name}/${folder_name}"
         sleep 1s
 
-        mkdir -p ${PWD}/../${log_folder_name}
-        mkdir ${PWD}/../${log_folder_name}/${folder_name}
+        mkdir -p ${work_dir}/../${log_folder_name}
+        mkdir ${work_dir}/../${log_folder_name}/${folder_name}
 
         Func_DIY1_Script
 
@@ -595,11 +597,11 @@ function Func_Main() {
         echo
         Func_LogMessage "开始update feeds...." "begin update feeds...."
         sleep 1s
-        ./scripts/feeds update -a | tee -a ${PWD}/../${log_folder_name}/${folder_name}/Func_Main1_feeds_update-git_log.log
+        ./scripts/feeds update -a | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/Func_Main1_feeds_update-git_log.log
         echo
         Func_LogMessage "开始install feeds...." "begin install feeds...."
         sleep 1s
-        ./scripts/feeds install -a | tee -a ${PWD}/../${log_folder_name}/${folder_name}/Func_Main2_feeds_install-git_log.log
+        ./scripts/feeds install -a | tee -a ${work_dir}/../${log_folder_name}/${folder_name}/Func_Main2_feeds_install-git_log.log
         echo
 
         Func_DIY2_Script
@@ -609,13 +611,13 @@ function Func_Main() {
             Func_LogMessage "开始将OpenwrtAction中config文件夹下的${config_name}注入源码中...." "Start to inject ${config_name} under the config folder in OpenwrtAction into source code..."
             sleep 2s
             echo
-            cat ${PWD}/../OpenWrtAction/$config_dir/${config_name} >${PWD}/../${openwrt_dir}/.config
+            cat ${work_dir}/../OpenWrtAction/$config_dir/${config_name} >${work_dir}/../${openwrt_dir}/.config
         fi
 
-        cd ${PWD}/../${openwrt_dir}
+        cd ${work_dir}/../${openwrt_dir}
         make menuconfig
-        cat ${PWD}/../${openwrt_dir}/.config >${PWD}/../OpenWrtAction/$config_dir/${config_name}
-        cd ${PWD}/../OpenWrtAction
+        cat ${work_dir}/../${openwrt_dir}/.config >${work_dir}/../OpenWrtAction/$config_dir/${config_name}
+        cd ${work_dir}/../OpenWrtAction
 
         if [ ! -n "$(git config --global user.email)" ]; then
             Func_LogSuccess "请输入git Global user.email:" "Please enter git Global user.email:"
