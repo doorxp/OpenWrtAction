@@ -55,7 +55,7 @@ timer=15
 # 编译环境默认值，1为WSL2，2为非WSL2的Linux环境。不要修改这里
 sysenv=2
 # OpenWrtAction Git URL
-owaUrl=https://github.com/smallprogram/OpenWrtAction.git
+owaUrl=https://github.com/doorxp/OpenWrtAction.git
 owa_branch=main
 # 是否首次编译 0否，1是
 is_first_compile=0
@@ -70,8 +70,8 @@ is_complie_error=0
 # 编译是否展示详细信息
 is_VS='V=s'
 #Git参数
-git_email=smallprogram@foxmail.com
-git_user=smallprogram
+git_email=doorxp@msn.com
+git_user=doorxp
 
 
 # 拉取最新代码
@@ -96,7 +96,7 @@ Func_LogMessage "3) openwrt" "3) platform_openwrt.sh"
 Func_LogMessage "将在15秒后默认选择 platform_immortalwrt.sh..." "The default choice will be platform_immortalwrt.sh in 15 seconds..."
 
 # 使用read命令等待用户输入，超时15秒后自动选择1
-read -t $timer -p "$(Func_LogMessage '输入对应的数字选择（默认1）: ' 'Enter the corresponding number to select (default 1): ')" choice
+read -t ${timer} -p "$(Func_LogMessage '输入对应的数字选择（默认1）: ' 'Enter the corresponding number to select (default 1): ')" choice
 echo
 # 根据用户输入选择对应的配置文件
 case $choice in
@@ -122,8 +122,8 @@ echo
 Func_LogMessage "配置文件已加载，继续执行脚本..." "Configuration file loaded, continuing script execution..."
 echo
 Func_LogMessage "输入任意值取消显示详细编译信息" "Enter any value to cancel the display of detailed compilation information"
-Func_LogMessage "将会在$timer秒后自动选择默认值" "The default value will be automatically selected after $timer seconds"
-read -t $timer isVS
+Func_LogMessage "将会在${timer}秒后自动选择默认值" "The default value will be automatically selected after ${timer} seconds"
+read -t ${timer} isVS
 if [ -n "$isVS" ]; then
     Func_LogMessage "显示详细编译信息 " "Display detailed compilation information"
     is_VS='V=s'

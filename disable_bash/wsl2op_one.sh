@@ -197,7 +197,7 @@ function Func_Compile_Firmware() {
     begin_date=开始时间$(date "+%Y-%m-%d-%H-%M-%S")
     folder_name=log_Compile_${configName}_$(date "+%Y-%m-%d-%H-%M-%S")
     Func_LogMessage "\033[31m 是否启用Clean编译，如果不输入任何值默认否，输入任意值启用Clean编译，Clean操作适用于大版本更新 \033[0m" "\033[31m Whether to enable Clean compilation, if you do not enter any value, the default is No, enter any value to enable Clean compilation, Clean operation is suitable for major version updates \033[0m"
-    Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
+    Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
     if [ ! -n "$isCleanCompile" ]; then
         Func_LogMessage "\033[34m 不执行make clean && make dirclean  \033[0m" "\033[34m OK, do not execute make clean && make dirclean  \033[0m"
     else
@@ -277,8 +277,8 @@ function Func_Compile_Firmware() {
     sleep 1s
     if [[ $sysenv == 1 ]]; then
         Func_LogMessage "\033[31m 是否启用单线程编译，如果不输入任何值默认否，输入任意值启用单线程编译 \033[0m" "\033[31m Whether to enable single-threaded compilation, if you do not enter any value, the default is No, enter any value to enable single-threaded compilation \033[0m"
-        Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
-        read -t $timer isSingleCompile
+        Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
+        read -t ${timer} isSingleCompile
         if [ ! -n "$isSingleCompile" ]; then
             Func_LogMessage "\033[34m OK，不执行单线程编译  \033[0m" "\033[34m OK, do not perform single-threaded compilation  \033[0m"
             sleep 1s
@@ -295,8 +295,8 @@ function Func_Compile_Firmware() {
 
     else
         Func_LogMessage "\033[31m 是否启用单线程编译，如果不输入任何值默认否，输入任意值启用单线程编译 \033[0m" "\033[31m Whether to enable single-threaded compilation, if you do not enter any value, the default is No, enter any value to enable single-threaded compilation \033[0m"
-        Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
-        read -t $timer isSingleCompile
+        Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
+        read -t ${timer} isSingleCompile
         if [ ! -n "$isSingleCompile" ]; then
             Func_LogMessage "\033[34m OK，不执行单线程编译  \033[0m" "\033[34m OK, do not perform single-threaded compilation  \033[0m"
             sleep 1s
@@ -331,8 +331,8 @@ function Func_Compile_Firmware() {
     Func_LogMessage "\033[34m 拷贝完成 \033[0m" "\033[34m Copy completed \033[0m"
 
     # Func_LogMessage "\033[31m 是否拷贝编译固件到${log_folder_name}/${folder_name}下？不输入默认不拷贝，输入任意值拷贝 \033[0m" "\033[31m Do you want to copy and compile the firmware to ${log_folder_name}/${folder_name}? Don’t copy by default, input any value to copy \033[0m"
-    # Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
-    # read -t $timer iscopy
+    # Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
+    # read -t ${timer} iscopy
     # if [ ! -n "$iscopy" ]; then
     #     Func_LogMessage "\033[34m OK，不拷贝 \033[0m" "\033[34m OK, don't copy \033[0m"
     # else
@@ -357,7 +357,7 @@ function Func_ConfigList() {
         echo "$key: $conf"
         # echo "129 key的值："$key
     done
-    read -t $timer configNameInp
+    read -t ${timer} configNameInp
     if [ ! -n "$configNameInp" ]; then
         i=1
         # configName=X86.config
@@ -387,8 +387,8 @@ function Func_ConfigList() {
 function Func_CleanLogFolder() {
     if [ -d "/home/${userName}/${log_folder_name}" ]; then
         Func_LogMessage "\033[31m 是否清理存储超过$clean_day天的日志文件，默认删除，如果录入任意值不删除 \033[0m" "\033[31m Whether to clean up the log files stored for more than $clean_day days, delete by default, if you enter any value, it will not be deleted \033[0m"
-        Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
-        read -t $timer isclean
+        Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
+        read -t ${timer} isclean
         if [ ! -n "$isclean" ]; then
             cd /home/${userName}/${log_folder_name}
             find -mtime +$clean_day -type d | xargs rm -rf
@@ -408,12 +408,12 @@ function Func_Main() {
     # 默认语言中文，其他英文
     echo -e "\033[31m 请选择默认语言，输入任意字符为英文，不输入默认中文 \033[0m"
     echo -e "\033[31m Please select the default language, enter any character as English, and do not enter the default Chinese. \033[0m"
-    read -t $timer isChinese
+    read -t ${timer} isChinese
 
     Func_LogMessage "\033[34m 注意，请确保当前linux账户为非root账户，并且已经安装相关编译依赖 \033[0m" "\033[34m Note, please make sure that the current linux account is a non-root account, and the relevant compilation dependencies have been installed \033[0m"
     Func_LogMessage "\033[34m 如果不符合上述条件，请安装依赖或ctrl+C退出 \033[0m" "\033[34m If the above conditions are not met, please Install dependencies or ctrl+C to exit \033[0m"
-    Func_LogMessage "\033[31m 是否安装编译依赖，不输入默认不安装，输入任意值安装，将会在$timer秒后自动选择默认值 \033[0m" "\033[31m Whether to install the compilation dependencies. Do not enter the default. Do not install. Enter any value to install. The default value will be automatically selected after $timer seconds \033[0m"
-    read -t $timer dependencies
+    Func_LogMessage "\033[31m 是否安装编译依赖，不输入默认不安装，输入任意值安装，将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m Whether to install the compilation dependencies. Do not enter the default. Do not install. Enter any value to install. The default value will be automatically selected after ${timer} seconds \033[0m"
+    read -t ${timer} dependencies
     if [ ! -n "$dependencies" ]; then
         Func_LogMessage "\033[34m OK，不安装 \033[0m" "\033[34m OK, Not installed \033[0m"
     else
@@ -432,8 +432,8 @@ function Func_Main() {
     sleep 2s
 
     Func_LogMessage "\033[31m 是否创建新的编译配置，默认否，输入任意字符将创建新的配置 \033[0m" "\033[31m Whether to create a new compilation configuration, the default is no, input any character will create a new configuration \033[0m"
-    Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
-    read -t $timer isCreateNewConfig
+    Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
+    read -t ${timer} isCreateNewConfig
     if [ ! -n "$isCreateNewConfig" ]; then
         Func_LogMessage "\033[34m OK，不创建新的编译配置 \033[0m" "\033[34m OK, do not create a new compilation configuration \033[0m"
     else
@@ -458,7 +458,7 @@ function Func_Main() {
     if [ ! -n "$isCreateNewConfig" ]; then
         echo
         Func_LogMessage "\033[31m 请输入默认OpenwrtAction中的config文件名，默认为$configName \033[0m" "\033[31m Please enter the config file name in the default OpenwrtAction, the default is $configName \033[0m"
-        Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
+        Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
         Func_ConfigList
         until [[ $configNameInp -ge 1 && $configNameInp -le $key ]]; do
             Func_LogMessage "\033[34m 你输入的 ${configNameInp} 是啥玩应啊，看好了序号，输入数值就行了。 \033[0m" "\033[34m What is the function of the ${configNameInp} you entered? Just take a good look at the serial number and just enter the value. \033[0m"
@@ -466,9 +466,9 @@ function Func_Main() {
             Func_ConfigList
         done
 
-        Func_LogMessage "\033[31m 请输入默认lean源码文件夹名称,如果不输入默认$ledeDir,将在($timer秒后使用默认值) \033[0m" "\033[31m Please enter the default lean source folder name, if you do not enter the default $ledeDir, the default value will be used after ($timer seconds) \033[0m"
-        Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
-        read -t $timer ledeDirInp
+        Func_LogMessage "\033[31m 请输入默认lean源码文件夹名称,如果不输入默认$ledeDir,将在(${timer}秒后使用默认值) \033[0m" "\033[31m Please enter the default lean source folder name, if you do not enter the default $ledeDir, the default value will be used after (${timer} seconds) \033[0m"
+        Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
+        read -t ${timer} ledeDirInp
         if [ ! -n "$ledeDirInp" ]; then
             Func_LogMessage "\033[34m OK，使用默认值$ledeDir \033[0m" "\033[34m OK, use the default value $ledeDir \033[0m"
         else
@@ -515,10 +515,10 @@ function Func_Main() {
     sleep 2s
 
     Func_LogMessage "\033[31m 你的编译环境是WSL2吗？ \033[0m" "\033[31m Is your compilation environment WSL2? \033[0m"
-    Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
+    Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
     Func_LogMessage "\033[34m 1. 是(默认) \033[0m" "\033[34m 1. Yes (default) \033[0m"
     Func_LogMessage "\033[34m 2. 不是  \033[0m" "\033[34m 2. NO \033[0m"
-    read -t $timer sysenv
+    read -t ${timer} sysenv
     if [ ! -n "$sysenv" ]; then
         sysenv=1
         Func_LogMessage "\033[34m 输入超时使用默认值 \033[0m" "\033[34m Use default value for input timeout \033[0m"
@@ -528,7 +528,7 @@ function Func_Main() {
         Func_LogMessage "\033[31m 你的编译环境是WSL2吗？ \033[0m" "\033[31m Is your compilation environment WSL2? \033[0m"
         Func_LogMessage "\033[34m 1. 是(默认) \033[0m" "\033[34m 1. Yes (default) \033[0m"
         Func_LogMessage "\033[34m 2. 不是  \033[0m" "\033[34m 2. NO \033[0m"
-        read -t $timer sysenv
+        read -t ${timer} sysenv
         if [ ! -n "$sysenv" ]; then
             sysenv=1
             Func_LogMessage "\033[34m 使用默认值 \033[0m" "\033[34m Use default \033[0m"
@@ -538,10 +538,10 @@ function Func_Main() {
 
     if [ ! -n "$isCreateNewConfig" ]; then
         Func_LogMessage "\033[31m 你接下来要干啥？？？ \033[0m" "\033[31m What are you going to do next? ? ? \033[0m"
-        Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
+        Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
         Func_LogMessage "\033[34m 1. 根据config自动编译固件。(默认) \033[0m" "\033[34m 1. Automatically compile the firmware according to config. (default)  \033[0m"
         Func_LogMessage "\033[34m 2. 我要配置config，配置完毕后自动同步回OpenwrtAction。 \033[0m" "\033[34m 2. I want to configure config, and automatically synchronize back to OpenwrtAction after configuration. \033[0m"
-        read -t $timer num
+        read -t ${timer} num
         if [ ! -n "$num" ]; then
             num=1
             Func_LogMessage "\033[34m 使用默认值 \033[0m" "\033[34m Use default \033[0m"
@@ -550,10 +550,10 @@ function Func_Main() {
         until [[ $num -ge 1 && $num -le 2 ]]; do
             Func_LogMessage "\033[34m 你输入的 ${num} 是啥玩应啊，看好了序号，输入数值就行了。 \033[0m" "\033[34m What is the function of the ${num} you entered? Just enter the number after you are optimistic about the serial number. \033[0m"
             Func_LogMessage "\033[31m 你接下来要干啥？？？ \033[0m" "\033[31m What are you going to do next? ? ? \033[0m"
-            Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
+            Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
             Func_LogMessage "\033[34m 1. 根据config自动编译固件。(默认) \033[0m" "\033[34m 1.Automatically compile the firmware according to config. (default) \033[0m"
             Func_LogMessage "\033[34m 2. 我要配置config，配置完毕后自动同步回OpenwrtAction。 \033[0m" "\033[34m 2.I want to configure config, and automatically synchronize back to OpenwrtAction after configuration. \033[0m"
-            read -t $timer num
+            read -t ${timer} num
             if [ ! -n "$num" ]; then
                 num=1
                 Func_LogMessage "\033[34m 使用默认值 \033[0m" "\033[34m Use default \033[0m"
@@ -624,20 +624,20 @@ function Func_Main() {
         fi
 
         Func_LogMessage "\033[31m 是否根据新的config编译？ \033[0m" "\033[31m Is it compiled according to the new config? \033[0m"
-        Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
+        Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
         Func_LogMessage "\033[34m 1. 是(默认值) \033[0m" "\033[34m 1.Yes(Default) \033[0m"
         Func_LogMessage "\033[34m 2. 不编译了。退出 \033[0m" "\033[34m 2.NO, Exit \033[0m"
-        read -t $timer num_continue
+        read -t ${timer} num_continue
         if [ ! -n "$num_continue" ]; then
             num_continue=1
         fi
         until [[ $num_continue -ge 1 && $num_continue -le 2 ]]; do
             Func_LogMessage "\033[34m 你输入的 ${num_continue} 是啥玩应啊，看好了序号，输入数值就行了。 \033[0m" "\033[34m What's the answer for the ${num_continue} you entered? Just enter the number after you are optimistic about the serial number. \033[0m"
             Func_LogMessage "\033[31m 是否根据新的config编译？ \033[0m" "\033[31m Is it compiled according to the new config? \033[0m"
-            Func_LogMessage "\033[31m 将会在$timer秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after $timer seconds \033[0m"
+            Func_LogMessage "\033[31m 将会在${timer}秒后自动选择默认值 \033[0m" "\033[31m The default value will be automatically selected after ${timer} seconds \033[0m"
             Func_LogMessage "\033[34m 1. 是(默认值) \033[0m" "\033[34m 1. Yes(Default) \033[0m"
             Func_LogMessage "\033[34m 2. 不编译了。退出  NO, Exit \033[0m" "\033[34m 2.NO, Exit \033[0m"
-            read -t $timer num_continue
+            read -t ${timer} num_continue
             if [ ! -n "$num_continue" ]; then
                 num_continue=1
                 Func_LogMessage "\033[34m 使用默认值 \033[0m" "\033[34m Use default \033[0m"
