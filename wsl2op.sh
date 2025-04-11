@@ -79,14 +79,14 @@ Func_LogMessage "正在从远程获取最新代码..." "Fetching the latest code
 git fetch origin
 
 Func_LogMessage "正在重置到最新的远程分支 ${owa_branch}..." "Resetting to the latest remote branch ${owa_branch}..."
-git reset --hard origin/${owa_branch}
-
+# git reset --hard origin/${owa_branch}
+git pull origin/${owa_branch}
 # 检查当前脚本是否被更新
-CURRENT_SCRIPT="$(basename "$0")"
-if [[ $(git diff origin/${owa_branch} -- "$CURRENT_SCRIPT") ]]; then
-    Func_LogMessage "脚本已更新，重新启动..." "Script has been updated, restarting..."
-    exec "$0" "$@"
-fi
+# CURRENT_SCRIPT="$(basename "$0")"
+# if [[ $(git diff origin/${owa_branch} -- "$CURRENT_SCRIPT") ]]; then
+#     Func_LogMessage "脚本已更新，重新启动..." "Script has been updated, restarting..."
+#     exec "$0" "$@"
+# fi
 
 
 Func_LogMessage "请选择要编译的平台：" "Please choose the configuration file to import:"
